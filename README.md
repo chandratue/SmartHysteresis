@@ -1,6 +1,6 @@
 # SmartHysteresis
 
-This repo contains code for the paper: Discovering sparse hysteresis models for smart materials (https://arxiv.org/abs/2302.05313)
+This repo contains codes for the paper: Discovering sparse hysteresis models for smart materials (https://arxiv.org/abs/2302.05313)
 
 To run codes one would need to install pysindy library (https://pysindy.readthedocs.io/en/latest/#)
 
