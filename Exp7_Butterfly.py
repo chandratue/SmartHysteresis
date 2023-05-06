@@ -6,13 +6,13 @@ from math import pi
 from pysindy.differentiation import FiniteDifference
 fd = FiniteDifference(order=2, d=1)
 
-t = np.linspace(0,10*pi,1000)
+t = np.linspace(0, 10*pi,1000)
 x = 4*np.sin(t)
 dx = fd._differentiate(x, t)
 mdx = np.abs(dx)
 
 def model(y, t):
-    dydt = 5*4*np.cos(t) - 0.25*4*np.abs(np.cos(t))*y - 0.5*4*np.cos(t)*np.abs(y)
+    dydt = 16*0.4*np.abs(np.cos(t))*np.sin(t) - 4*0.85 * np.abs(np.cos(t))*y + 4*0.2*(np.cos(t))
     return dydt
 
 y0 = 0
@@ -46,26 +46,26 @@ my = np.abs(y)
 my = my.reshape(-1,)
 y = y.reshape(-1,)
 dy = dy.reshape(-1,)
-t1 = 2*y*dx
+t1 = 2*y*x*mdx
 t2 = 2*y*mdx*y
-t3 = 2*y*dx*my
+t3 = 2*y*dx
 terms = 5*t1-0.2*t2-0.5*t3
 
 z = z.reshape(1000,)
 
-X = np.stack((z, x, 2*y*dx, 2*y*mdx*y, 2*y*dx*my), axis=-1)
+X = np.stack((z, x, 2*y*x*mdx, 2*y*mdx*y, 2*y*dx), axis=-1)
 
 model = ps.SINDy()
 model.fit(X,t)
 model.print()
 
-c1 = 4.993
-c2 = -0.250
-c3 = -0.498
+c1 = 0.4
+c2 = -0.849
+c3 = 0.20
 
 def model(w,t):
-    dydt = c1*(4*np.cos(t)) + c2*(4*np.abs(np.cos(t))*w[0]) +c3*(4*np.cos(t)*np.abs(w[0]))
-    dzdt = 2*w[0]*(c1*(4*np.cos(t)) + c2*(4*np.abs(np.cos(t))*w[0]) +c3*(4*np.cos(t)*np.abs(w[0])))
+    dydt = 16*c1*np.abs(np.cos(t))*np.sin(t) + 4*c2 * np.abs(np.cos(t))*w[0] + 4*c3*(np.cos(t))
+    dzdt = 2*w[0]*(16*c1*np.abs(np.cos(t))*np.sin(t) + 4*c2 * np.abs(np.cos(t))*w[0] + 4*c3*(np.cos(t)))
     dwdt = [dydt,dzdt]
     return dwdt
 
@@ -79,7 +79,7 @@ plt.plot(x, z, 'r')
 plt.plot(x, w[:, 1], linewidth=2, linestyle=':')
 plt.xlabel('Voltage [kV]', fontsize = 12)
 plt.ylabel('Displacement [$\mu$m]', fontsize = 12)
-plt.legend(['Ground truth' , 'Learned relation'], prop={'size': 10})
+plt.legend(['Ground truth' , 'Learned relation'], prop={'size': 10}, frameon=False)
 plt.xticks(fontsize=12)
 plt.yticks(fontsize=12)
 plt.savefig("Results/Exp7_Butterfly/model.pdf", dpi = 3000, bbox_inches='tight')

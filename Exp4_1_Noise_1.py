@@ -7,14 +7,14 @@ from pysindy.differentiation import FiniteDifference
 fd = FiniteDifference(order=2, d=1)
 np.random.seed(29)
 
-t = np.linspace(0,5*pi,1000)
+t = np.linspace(0,20*pi,1000)
 x = np.sin(t)
 
 dx = fd._differentiate(x, t)
 mdx = np.abs(dx)
 
 def model(y, t):
-    dydt = 5*np.cos(t) - 0.25*np.abs(np.cos(t))*y - 0.5*np.cos(t)*np.abs(y)
+    dydt = 0.4*np.abs(np.cos(t))*np.sin(t) - 0.5 * np.abs(np.cos(t))*y + 0.25*(np.cos(t))
     return dydt
 
 y0 = 0
@@ -51,10 +51,10 @@ my = my.reshape(-1,)
 
 y = y.reshape(-1,)
 dy = dy.reshape(-1,)
-t1 = dx
+t1 = mdx*x
 t2 = mdx*y
-t3 = dx*my
-terms = 5*t1-0.25*t2-0.5*t3
+t3 = dx
+terms = 0.4*t1-0.5*t2+0.25*t3
 
 X = np.stack((y, x, dx, mdx, my), axis=-1)
 
@@ -62,11 +62,11 @@ model = ps.SINDy()
 model.fit(X,t)
 model.print()
 
-c1 = 5.008
-c2 = -0.249
-c3 = -0.503
+c1 = 0.397
+c2 = -0.49
+c3 = 0.251
 def test_model(y, t):
-    dydt = c1*np.cos(t) + c2*np.abs(np.cos(t))*y + c3*np.cos(t)*np.abs(y)
+    dydt = c1*np.abs(np.cos(t))*np.sin(t) + c2 * np.abs(np.cos(t))*y + c3*(np.cos(t))
     return dydt
 
 ytest_0 = 0
@@ -102,11 +102,11 @@ clf.fit(X_train, y_train)
 print("Coefficients from Ridge regression: ",clf.coef_)
 print("Intercept from Ridge regression: ",clf.intercept_)
 
-c1 = 4.9791
-c2 = -0.2370
-c3 = -0.4993
+c1 = 0.28
+c2 = -0.12
+c3 = 0.28
 def test_model(y, t):
-    dydt = c1*np.cos(t) + c2*np.abs(np.cos(t))*y + c3*np.cos(t)*np.abs(y)
+    dydt = c1*np.abs(np.cos(t))*np.sin(t) + c2 * np.abs(np.cos(t))*y + c3*(np.cos(t))
     return dydt
 
 ytest_0 = 0
@@ -121,11 +121,11 @@ from sklearn.linear_model import LinearRegression
 linreg = LinearRegression().fit(X_train, y_train)
 print("Coefficients from Linear regression: ",linreg.coef_)
 
-c1 = 5.0303
-c2 = -0.2361
-c3 = -0.5214
+c1 = 0.4032
+c2 = -0.5086
+c3 = 0.2499
 def test_model(y, t):
-    dydt = c1*np.cos(t) + c2*np.abs(np.cos(t))*y + c3*np.cos(t)*np.abs(y)
+    dydt = c1*np.abs(np.cos(t))*np.sin(t) + c2 * np.abs(np.cos(t))*y + c3*(np.cos(t))
     return dydt
 
 ytest_0 = 0

@@ -7,20 +7,20 @@ from pysindy.differentiation import FiniteDifference
 fd = FiniteDifference(order=2, d=1)
 np.random.seed(29)
 
-t = np.linspace(0,5*pi,1000)
+t = np.linspace(0,20*pi,1000)
 x = np.sin(t)
 
 dx = fd._differentiate(x, t)
 mdx = np.abs(dx)
 
 def model(y, t):
-    dydt = 5*np.cos(t) - 0.25*np.abs(np.cos(t))*y - 0.5*np.cos(t)*np.abs(y)
+    dydt = 0.4*np.abs(np.cos(t))*np.sin(t) - 0.5 * np.abs(np.cos(t))*y + 0.25*(np.cos(t))
     return dydt
 
 y0 = 0
 y = odeint(model, y0, t)
 # Noise level
-sigma = 0.02
+sigma = 0.05
 y = y*(1 + sigma*np.random.randn(1000,1))
 
 fig, ax1 = plt.subplots()
@@ -41,7 +41,7 @@ ax2.tick_params(axis='y', labelcolor=color)
 fig.tight_layout()  # otherwise the right y-label is slightly clipped
 plt.xticks(fontsize=12)
 plt.yticks(fontsize=12)
-plt.savefig("Results/Exp4_2_Noise_2/inp_out.pdf", dpi = 3000, bbox_inches='tight')
+plt.savefig("Results/Exp4_1_Noise_1/inp_out.pdf", dpi = 3000, bbox_inches='tight')
 plt.show()
 
 dy = fd._differentiate(y, t)
@@ -51,10 +51,10 @@ my = my.reshape(-1,)
 
 y = y.reshape(-1,)
 dy = dy.reshape(-1,)
-t1 = dx
+t1 = mdx*x
 t2 = mdx*y
-t3 = dx*my
-terms = 5*t1-0.25*t2-0.5*t3
+t3 = dx
+terms = 0.4*t1-0.5*t2+0.25*t3
 
 X = np.stack((y, x, dx, mdx, my), axis=-1)
 
@@ -62,11 +62,11 @@ model = ps.SINDy()
 model.fit(X,t)
 model.print()
 
-c1 = 5.015
-c2 = -0.248
-c3 = -0.505
+c1 = 0.379
+c2 = -0.43
+c3 = 0.256
 def test_model(y, t):
-    dydt = c1*np.cos(t) + c2*np.abs(np.cos(t))*y + c3*np.cos(t)*np.abs(y)
+    dydt = c1*np.abs(np.cos(t))*np.sin(t) + c2 * np.abs(np.cos(t))*y + c3*(np.cos(t))
     return dydt
 
 ytest_0 = 0
@@ -76,10 +76,10 @@ plt.plot(x, y, 'r')
 plt.plot(x, y_test, linewidth=2, linestyle=':')
 plt.xlabel('Voltage', fontsize = 12)
 plt.ylabel('Displacement', fontsize = 12)
-plt.legend(['Ground truth' , 'Learned relation'], loc='upper left', prop={'size': 10})
+plt.legend(['Ground truth' , 'Learned relation'], loc='upper left', prop={'size': 10}, frameon=False)
 plt.xticks(fontsize=12, rotation='45')
 plt.yticks(fontsize=12)
-plt.savefig("Results/Exp4_2_Noise_2/model.pdf", dpi = 3000, bbox_inches='tight')
+plt.savefig("Results/Exp4_1_Noise_1/model.pdf", dpi = 3000, bbox_inches='tight')
 plt.show()
 
 y = y.reshape(-1,1)
@@ -102,11 +102,11 @@ clf.fit(X_train, y_train)
 print("Coefficients from Ridge regression: ",clf.coef_)
 print("Intercept from Ridge regression: ",clf.intercept_)
 
-c1 = 5.0125
-c2 = -0.2236
-c3 = -0.5225
+c1 = 0.293
+c2 = -0.148
+c3 = 0.2852
 def test_model(y, t):
-    dydt = c1*np.cos(t) + c2*np.abs(np.cos(t))*y + c3*np.cos(t)*np.abs(y)
+    dydt = c1*np.abs(np.cos(t))*np.sin(t) + c2 * np.abs(np.cos(t))*y + c3*(np.cos(t))
     return dydt
 
 ytest_0 = 0
@@ -121,11 +121,11 @@ from sklearn.linear_model import LinearRegression
 linreg = LinearRegression().fit(X_train, y_train)
 print("Coefficients from Linear regression: ",linreg.coef_)
 
-c1 = 5.0641
-c2 = -0.2265
-c3 = -0.5447
+c1 = 0.417
+c2 = -0.541
+c3 = 0.2497
 def test_model(y, t):
-    dydt = c1*np.cos(t) + c2*np.abs(np.cos(t))*y + c3*np.cos(t)*np.abs(y)
+    dydt = c1*np.abs(np.cos(t))*np.sin(t) + c2 * np.abs(np.cos(t))*y + c3*(np.cos(t))
     return dydt
 
 ytest_0 = 0
