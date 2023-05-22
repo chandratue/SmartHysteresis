@@ -1,6 +1,6 @@
 # SmartHysteresis
 
-This repo contains codes for the paper: Discovering sparse hysteresis models for piezoelectric materials (https://arxiv.org/abs/2302.05313)
+This repo contains codes for the paper: Discovery of sparse hysteresis models for piezoelectric materials (https://doi.org/10.1063/5.0146134) (https://arxiv.org/abs/2302.05313)
 
 To run codes one would need to install pysindy library (https://pysindy.readthedocs.io/en/latest/#)
 
